@@ -62,3 +62,9 @@ map_group('Jump backward', { 'n', 'x' }, 'Ä', {
     opts = { desc = 'Next error' },
   },
 })
+
+--tmux
+vim.keymap.set('n', '<C-h>', ':TmuxNavigateLeft<CR>')
+vim.keymap.set('n', '<C-j>', ':TmuxNavigateDown<CR>')
+vim.keymap.set('n', '<C-k>', ':TmuxNavigateUp<CR>')
+vim.keymap.set('n', '<C-l>', ':TmuxNavigateRight<CR>')

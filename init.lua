@@ -102,28 +102,13 @@ do
 
   keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
-  -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
-  -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
-  -- is not what someone will guess without a bit more experience.
-  --
-  -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
-  -- or just use <C-\><C-n> to exit terminal mode
-  keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-
-  -- Keybinds to make split navigation easier.
-  --  Use CTRL+<hjkl> to switch between windows
-  --
   --  See `:help wincmd` for a list of all window commands
-  keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-  keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-  keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-  keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
   -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
-  -- keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
-  -- keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
-  -- keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
-  -- keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
+  keymap.set('n', '<C-S-h>', '<C-w>H', { desc = 'Move window to the left' })
+  keymap.set('n', '<C-S-l>', '<C-w>L', { desc = 'Move window to the right' })
+  keymap.set('n', '<C-S-j>', '<C-w>J', { desc = 'Move window to the lower' })
+  keymap.set('n', '<C-S-k>', '<C-w>K', { desc = 'Move window to the upper' })
 
   keymap.set('n', '<leader>g', '<cmd>LazyGit<cr>', { desc = 'Lazygit popup' })
 
@@ -604,6 +589,7 @@ do
         lua = true,
         python = true,
         rust = true,
+        javascript = true,
       }
       if enabled_filetypes[vim.bo[bufnr].filetype] then
         return { timeout_ms = 500 }
@@ -614,18 +600,13 @@ do
     default_format_opts = {
       lsp_format = 'fallback', -- Use external formatters if configured below, otherwise use LSP formatting. Set to `false` to disable LSP formatting entirely.
     },
-    -- You can also specify external formatters in here.
     formatters_by_ft = {
       rust = { 'rustfmt' },
       -- Conform can also run multiple formatters sequentially
-      -- python = { "isort", "black" },
-      --
       -- You can use 'stop_after_first' to run the first available formatter from the list
       -- javascript = { "prettierd", "prettier", stop_after_first = true },
     },
   }
-
-  -- vim.keymap.set({ 'n', 'v' }, '<leader>f', function() require('conform').format { async = true } end, { desc = '[F]ormat buffer' })
 end
 
 -- ============================================================
@@ -633,37 +614,25 @@ end
 -- blink.cmp and luasnip setup
 -- ============================================================
 do
-  -- [[ Snippet Engine ]]
-
   -- NOTE: You can also specify plugin using a version range for its git tag.
   --  See `:help vim.version.range()` for more info
   vim.pack.add { { src = gh 'L3MON4D3/LuaSnip', version = vim.version.range '2.*' } }
   require('luasnip').setup {}
 
   -- `friendly-snippets` contains a variety of premade snippets.
-  --    See the README about individual language/framework/plugin snippets:
-  --    https://github.com/rafamadriz/friendly-snippets
-  --
-  -- vim.pack.add { gh 'rafamadriz/friendly-snippets' }
-  -- require('luasnip.loaders.from_vscode').lazy_load()
+  --    See the README about individual language/framework/plugin snippets
+  vim.pack.add { gh 'rafamadriz/friendly-snippets' }
+  require('luasnip.loaders.from_vscode').lazy_load()
 
   -- [[ Autocomplete Engine ]]
   vim.pack.add { { src = gh 'saghen/blink.cmp', version = vim.version.range '1.*' } }
   require('blink.cmp').setup {
     keymap = {
-      -- 'default' (recommended) for mappings similar to built-in completions
-      --   <c-y> to accept ([y]es) the completion.
-      --    This will auto-import if your LSP supports it.
-      --    This will expand snippets if the LSP sent a snippet.
       -- 'super-tab' for tab to accept
       -- 'enter' for enter to accept
       -- 'none' for no mappings
       --
-      -- For an understanding of why the 'default' preset is recommended,
-      -- you will need to read `:help ins-completion`
-      --
-      -- No, but seriously. Please read `:help ins-completion`, it is really good!
-      --
+      -- Please read `:help ins-completion`, it is really good!
       -- All presets have the following mappings:
       -- <tab>/<s-tab>: move to right/left of your snippet expansion
       -- <c-space>: Open menu or open docs if already open
@@ -673,39 +642,25 @@ do
       --
       -- See `:help blink-cmp-config-keymap` for defining your own keymap
       preset = 'enter',
-
       -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
       --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
     },
-
     appearance = {
       -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
       -- Adjusts spacing to ensure icons are aligned
       nerd_font_variant = 'mono',
     },
-
     completion = {
       -- By default, you may press `<c-space>` to show the documentation.
       -- Optionally, set `auto_show = true` to show the documentation after a delay.
       documentation = { auto_show = true, auto_show_delay_ms = 300 },
     },
-
     sources = {
       default = { 'lsp', 'path', 'snippets' },
     },
-
     snippets = { preset = 'luasnip' },
-
-    -- Blink.cmp includes an optional, recommended rust fuzzy matcher,
-    -- which automatically downloads a prebuilt binary when enabled.
-    --
-    -- By default, we use the Lua implementation instead, but you may enable
-    -- the rust implementation via `'prefer_rust_with_warning'`
-    --
     -- See `:help blink-cmp-config-fuzzy` for more information
     fuzzy = { implementation = 'rust' },
-
-    -- Shows a signature help window while you type arguments for a function
     signature = { enabled = true },
   }
 end
