@@ -499,7 +499,7 @@ do
     clangd = {},
     gopls = {},
     pyright = {},
-    rust_analyzer = {},
+    -- rust_analyzer = {},
     --
     -- Some languages (like typescript) have entire language plugins that can be useful:
     --    https://github.com/pmizio/typescript-tools.nvim
@@ -588,7 +588,7 @@ do
       local enabled_filetypes = {
         lua = true,
         python = true,
-        rust = true,
+        -- rust = true,
         javascript = true,
       }
       if enabled_filetypes[vim.bo[bufnr].filetype] then
@@ -601,7 +601,7 @@ do
       lsp_format = 'fallback', -- Use external formatters if configured below, otherwise use LSP formatting. Set to `false` to disable LSP formatting entirely.
     },
     formatters_by_ft = {
-      rust = { 'rustfmt' },
+      -- rust = { 'rustfmt' },
       -- Conform can also run multiple formatters sequentially
       -- You can use 'stop_after_first' to run the first available formatter from the list
       -- javascript = { "prettierd", "prettier", stop_after_first = true },
