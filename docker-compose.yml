@@ -1,0 +1,11 @@
+services:
+  nvim:
+    build: .
+    volumes:
+      - ~/.config/fish/:/home/dev/.config/fish/
+      - ~/.config/lazygit/:/home/dev/.config/lazygit/
+      - .:/home/dev/.config/nvim/
+      - ~/.gitconfig/:/home/dev/.gitconfig
+      - ~/.local/share/nvim/:/home/dev/.local/share/nvim/
+    stdin_open: true
+    tty: true
