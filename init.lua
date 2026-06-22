@@ -19,7 +19,6 @@ do
   o.showmode = false -- Don't show the mode, since it's already in the status line
 
   --  Schedule the setting after `UiEnter` because it can increase startup-time.
-  --  Remove this option if you want your OS clipboard to remain independent.
   --  See `:help 'clipboard'`
   vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
 
@@ -49,7 +48,7 @@ do
   o.signcolumn = 'yes' -- Keep signcolumn on by default
   o.showmatch = true -- Highlight matching brackets
   o.matchtime = 10 -- How long to show matching bracket
-  o.cmdheight = 1 -- Command line height
+  o.cmdheight = 0 -- Command line height
   o.completeopt = 'menuone,noinsert,noselect' -- Completion options
 end
 
@@ -114,8 +113,6 @@ do
 
   --  See `:help lua-guide-autocommands`
 
-  -- Highlight when yanking (copying) text
-  --  Try it with `yap` in normal mode
   --  See `:help vim.hl.on_yank()`
   vim.api.nvim_create_autocmd('TextYankPost', {
     desc = 'Highlight when yanking (copying) text',
@@ -132,7 +129,6 @@ do
   --  See `:help vim.pack`, `:help vim.pack-examples` or the
   --  excellent blog post from the creator of vim.pack and mini.nvim:
   --  https://echasnovski.com/blog/2026-03-13-a-guide-to-vim-pack
-  --
   --  To inspect plugin state and pending updates, run :lua vim.pack.update(nil, { offline = true })
   --  To update plugins, run :lua vim.pack.update()
 
@@ -148,8 +144,7 @@ do
   end
 
   -- This autocommand runs after a plugin is installed or updated and
-  --  runs the appropriate build command for that plugin if necessary.
-  --
+  -- runs the appropriate build command for that plugin if necessary.
   -- See `:help vim.pack-events`
   vim.api.nvim_create_autocmd('PackChanged', {
     callback = function(ev)
@@ -196,12 +191,22 @@ do
   vim.pack.add { gh 'lewis6991/gitsigns.nvim', gh 'kdheepak/lazygit.nvim' }
   require('gitsigns').setup {
     signs = {
-      add = { text = '+' }, ---@diagnostic disable-line: missing-fields
-      change = { text = '~' }, ---@diagnostic disable-line: missing-fields
-      delete = { text = '_' }, ---@diagnostic disable-line: missing-fields
-      topdelete = { text = '‾' }, ---@diagnostic disable-line: missing-fields
-      changedelete = { text = '~' }, ---@diagnostic disable-line: missing-fields
+      add = { text = '┃' },
+      change = { text = '┃' },
+      delete = { text = '_' },
+      topdelete = { text = '‾' },
+      changedelete = { text = '~' },
+      untracked = { text = '┆' },
     },
+    signs_staged = {
+      add = { text = '┃' },
+      change = { text = '┃' },
+      delete = { text = '_' },
+      topdelete = { text = '‾' },
+      changedelete = { text = '~' },
+      untracked = { text = '┆' },
+    },
+    signs_staged_enable = true,
   }
 
   -- Useful plugin to show you pending keybinds.
@@ -219,11 +224,6 @@ do
     },
   }
 
-  -- [[ Colorscheme ]]
-  -- You can easily change to a different colorscheme.
-  -- Change the name of the colorscheme plugin below, and then
-  -- change the command under that to load whatever the name of that colorscheme is.
-  --
   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
   vim.pack.add { gh 'folke/tokyonight.nvim' }
   ---@diagnostic disable-next-line: missing-fields
@@ -231,12 +231,13 @@ do
     styles = {
       comments = { italic = false }, -- Disable italics in comments
     },
+    transparent = true,
   }
 
   -- Load the colorscheme here.
   -- Like many other themes, this one has different styles, and you could load
   -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-  vim.cmd.colorscheme 'tokyonight-night'
+  vim.cmd.colorscheme 'tokyonight-moon'
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
@@ -273,7 +274,18 @@ do
   -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
   -- - sd'   - [S]urround [D]elete [']quotes
   -- - sr)'  - [S]urround [R]eplace [)] [']
-  require('mini.surround').setup()
+  require('mini.surround').setup {
+    mappings = {
+      add = 'öa', -- Add surrounding in Normal and Visual modes
+      delete = 'öd', -- Delete surrounding
+      find = 'öf', -- Find surrounding (to the right)
+      find_left = 'öF', -- Find surrounding (to the left)
+      highlight = 'öh', -- Highlight surrounding
+      replace = 'ör', -- Replace surrounding
+      suffix_last = 'l', -- Suffix to search with "prev" method
+      suffix_next = 'n', -- Suffix to search with "next" method
+    },
+  }
 
   -- Simple and easy statusline.
   --  You could remove this setup call if you don't like it,
@@ -525,8 +537,8 @@ do
             path = { 'lua/?.lua', 'lua/?/init.lua' },
           },
           workspace = {
-            checkThirdParty = false,
-            -- NOTE: this is a lot slower and will cause issues when working on your own configuration.
+            checkThirdParty = true,
+            -- NOTE: this is a lot slower (on false?) and will cause issues when working on your own configuration.
             --  See https://github.com/neovim/nvim-lspconfig/issues/3189
             library = vim.tbl_extend('force', vim.api.nvim_get_runtime_file('', true), {
               '${3rd}/luv/library',
@@ -540,6 +552,9 @@ do
         Lua = {
           format = { enable = false }, -- Disable formatting (formatting is done by stylua)
         },
+      },
+      flags = {
+        debounce_text_changes = 300,
       },
     },
   }
@@ -590,7 +605,7 @@ do
       local enabled_filetypes = {
         lua = true,
         python = true,
-        -- rust = true,
+        rust = true,
         javascript = true,
       }
       if enabled_filetypes[vim.bo[bufnr].filetype] then
