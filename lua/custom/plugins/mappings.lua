@@ -24,9 +24,9 @@ vim.keymap.set('n', '<C-u>', '<C-u>zz', { desc = 'Half page up (centered)' })
 vim.keymap.set('v', '<', '<gv', { desc = 'Indent left and reselect' })
 vim.keymap.set('v', '>', '>gv', { desc = 'Indent right and reselect' })
 
--- Better J behavior
-vim.keymap.set('n', 'J', 'mzJ`z', { desc = 'Join lines and keep cursor position' })
---
+vim.keymap.set('n', 'J', 'mzJ`z', { desc = 'Join lines and keep cursor position' }) -- Better J behavior
+vim.keymap.set('n', '.', 'mz.`z', { desc = 'Last action and keep cursor position' })
+
 -- jump to
 map_group('Jump forward', { 'n', 'x' }, 'ä', {
   {
@@ -49,17 +49,17 @@ map_group('Jump backward', { 'n', 'x' }, 'Ä', {
   {
     key = 'd',
     func = function() vim.diagnostic.jump { count = -1 } end,
-    opts = { desc = 'Next diagnostic' },
+    opts = { desc = 'Previous diagnostic' },
   },
   {
     key = 'w',
     func = function() vim.diagnostic.jump { severity = 2, count = -1 } end,
-    opts = { desc = 'Next warning' },
+    opts = { desc = 'Previous warning' },
   },
   {
     key = 'e',
     func = function() vim.diagnostic.jump { severity = 1, count = -1 } end,
-    opts = { desc = 'Next error' },
+    opts = { desc = 'Previous error' },
   },
 })
 
